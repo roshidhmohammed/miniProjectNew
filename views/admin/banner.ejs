@@ -1,0 +1,76 @@
+<%- include('../layouts/adminheader.ejs') %>
+
+    
+<section>
+      <div class="row mt-4 ">
+        <h1 style="text-align: center;">Banner Management</h1>
+        <a href="/admin/adminOrder" class="btn btn-danger ml-auto" style="color:black; font-weight: bolder; font-size: medium;" >go back</a>
+      </div>
+      <br>
+      <% if(typeof message!="undefined" ){ %>
+        <p class="text-danger">
+            <%= message %>
+        </p>
+        <%}%>
+
+    </div>
+    <div style="background-color:darkslategray;">
+    <form action="/admin/loadBanners" method="post" enctype="multipart/form-data">
+      <div class="card-title" style="display:flex; justify-content: center;">
+        <h3 style="color:white; font-weight: bolder;">Add Banner</h3>
+    </div>
+      <input type="text" name="banner" placeholder=" Enter Banner Name">
+      <br><br>
+      <input type="file" name="bannerImage" multiple />
+      <br>
+      <button type="submit" class="btn btn-danger mt-3" style="color: white; font-weight: bolder; font-size: medium;">Upload</button>
+      <hr />
+    </form>
+    </div>
+
+    <table class="table mt-4">
+      <thead>
+        <tr>
+          <th scope="col" style="font-weight: bolder;"> Sl No</th>
+          <th scope="col" style="font-weight: bolder;">Banner Name</th>
+          <th scope="col" style="font-weight: bolder;">Banner Images</th>
+          <!-- <th scope="col">Description</th> -->
+          <th style="font-weight: bolder; color: black;">Select</th>
+          <!-- <th scope="col">Status</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <% if(banners.length>0){ %>
+        <% for(let i=0;i<banners.length;i++){ %>
+            <tr>
+              <th scope="row"><%= i+1 %></th>
+              <td><%=banners[i].banner %></td> 
+              <td><img style="width: 50px; height: 50px;" src="/banners/<%= banners[i].bannerImage[0]%>" alt="">
+              <img style="width: 50px; height: 50px;" src="/banners/<%= banners[i].bannerImage[1]%>" alt=""></td>
+              <td>
+                <% if(banners[i].is_active==1) { %>
+                  <img style="width: 1.6vw"
+                      src="/banners/greenmark.png" />
+                  <% } else { %>
+
+                      <% } %>
+              </td>
+              <td><a href="/admin/currentBanner?id=<%= banners[i]._id %>"
+                class="btn btn-danger" style="color:black; font-size: medium; font-weight: bolder;"> Choose </a>
+              </td>
+
+            </tr>
+            <% }} else { %>
+                <tr>
+                    <td colspan="5">Banner not found</td>
+                </tr>
+            <% } %>
+</tbody>
+
+            
+
+
+      </tbody>
+    </table>
+  </section>
+   

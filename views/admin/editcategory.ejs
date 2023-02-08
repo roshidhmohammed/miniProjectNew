@@ -1,0 +1,31 @@
+<%- include('../layouts/adminheader.ejs') %>
+
+
+    <div class="col-xl-12 offset-xl-12">
+        <div class="card">
+            <div class="card-title" style="display: flex; justify-content:center;">
+                <h3 style="text-align: center; margin-right: 10rem;">Edit Category</h3>
+            </div>
+            <hr>
+            <% if(typeof message!=='undefined') { %>
+                <h4>
+                    <p style="color:red;">
+                        <%= message %>
+                    </p>
+                </h4>
+                <% } %>
+                <form action="/admin/edit-category/<%=category._id%>" method="post">
+                    <div class="form group mb-3">
+                        <input type="text"  style="background-color:black; color: white;" class="form-control form-control-rounded" name="category"
+                        id="input-7" value="<%=category.name%>"  required>
+                    </div>
+                    <hr>
+                    <div class="form-group">
+                        <button value ="submit" class="btn btn-light btn-round" style="font-weight: bolder; color:black;"><i class="icon-arrow-right"></i>UPDATE CATEGORY</button>
+                        <a href="/admin/admin-category" class="btn btn-light btn-round" style="font-weight: bolder; color:black;">CATEGORY LIST</a>
+                    </div>
+                </form>
+        </div>
+    </div>
+
+
