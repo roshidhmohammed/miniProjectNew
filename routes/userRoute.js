@@ -104,7 +104,7 @@ user_route.get('/orderSuccess',auth.isLogin,userController.loadSuccess);
 
 user_route.get('/cancelProduct', userController.returnProduct)
 
-user_route.get('/export-invoice-pdf',auth.isLogin,userController.downloadInvoice)
+// user_route.get('/export-invoice-pdf',auth.isLogin,userController.downloadInvoice)
 
 // user_route.get('/return-product',userController.returnProduct)
 

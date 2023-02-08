@@ -8,7 +8,7 @@ const Banner = require("../models/bannerModel");
 const bcrypt = require('bcrypt');
 const fast2sms =require("fast-two-sms");
 const RazorPay = require('razorpay');
-const pdf = require('html-pdf');
+// const pdf = require('html-pdf');
 const fs = require('fs');
 const path = require('path');
 const ejs = require('ejs');
@@ -1018,68 +1018,68 @@ const addCoupon = async (req,res) =>{
     }
 }
 
-const downloadInvoice = async (req,res) => {
-    try {
-        userSession = req.session
-        if(userSession.userId) {
-            const id = req.query.id
-            const orderData = await Orders.findById({_id:id})
-        const userData = await User.findById({_id:userSession.userId})
-        await orderData.populate('products.item.productId')
-            userSession.currentOrder = id
-            const data = {
-                order: orderData
-            }
-            const filePathName = path.resolve(__dirname,'../views/users/invoiceToPdf.ejs')
-            const htmlString = fs.readFileSync(filePathName).toString();
+// const downloadInvoice = async (req,res) => {
+//     try {
+//         userSession = req.session
+//         if(userSession.userId) {
+//             const id = req.query.id
+//             const orderData = await Orders.findById({_id:id})
+//         const userData = await User.findById({_id:userSession.userId})
+//         await orderData.populate('products.item.productId')
+//             userSession.currentOrder = id
+//             const data = {
+//                 order: orderData
+//             }
+//             const filePathName = path.resolve(__dirname,'../views/users/invoiceToPdf.ejs')
+//             const htmlString = fs.readFileSync(filePathName).toString();
 
-            let options = {
-                format: 'A3',
-                // orientation:"portrait",
-                // border:"10mm"
+//             let options = {
+//                 format: 'A3',
+//                 // orientation:"portrait",
+//                 // border:"10mm"
 
-            }
-
-
-            const ejsData = ejs.render(htmlString,data,userData)
+//             }
 
 
-        // const filename = Math.random() + '_doc' + '.pdf';
-        // let array = [];
+//             const ejsData = ejs.render(htmlString,data,userData)
+
+
+//         // const filename = Math.random() + '_doc' + '.pdf';
+//         // let array = [];
         
         
-         pdf.create(ejsData,options).toFile('invoice.pdf',(err,response)=>{
-         if(err) {
-            console.log(err)
-         } })
+//          pdf.create(ejsData,options).toFile('invoice.pdf',(err,response)=>{
+//          if(err) {
+//             console.log(err)
+//          } })
 
-        const filePath = path.resolve(__dirname,'../invoice.pdf');
-        fs.readFile(filePath,(err,file)=>{
-            if(err){
-                console.log(err);
-                return res.status(500).send('could not download file');
-            }
-            res.setHeader('content-type','application/pdf');
-            res.setHeader('content-disposition','attachment;filename="users.pdf"');
+//         const filePath = path.resolve(__dirname,'../invoice.pdf');
+//         fs.readFile(filePath,(err,file)=>{
+//             if(err){
+//                 console.log(err);
+//                 return res.status(500).send('could not download file');
+//             }
+//             res.setHeader('content-type','application/pdf');
+//             res.setHeader('content-disposition','attachment;filename="users.pdf"');
 
-            res.send(file);
-
-
-        })
-        //  res.render('orderProductDetail',{order:orderData,user:userData,couponTotal:userSession.couponTotal,offer:userSession.offer})
+//             res.send(file);
 
 
-        // orderData.forEach(orders=> {
-        //     const order= {
+//         })
+//         //  res.render('orderProductDetail',{order:orderData,user:userData,couponTotal:userSession.couponTotal,offer:userSession.offer})
 
-        //     }
 
-        // })
-    }
-    } catch (error) {
-        console.log(error.message)
-    }
-}
+//         // orderData.forEach(orders=> {
+//         //     const order= {
+
+//         //     }
+
+//         // })
+//     }
+//     } catch (error) {
+//         console.log(error.message)
+//     }
+// }
 
 const returnProduct = async (req, res) => {
     try {
@@ -1165,7 +1165,7 @@ module.exports = {
     addCoupon,
     returnProduct,
     getCategoryProduct,
-    downloadInvoice,
+    // downloadInvoice,
     wallet
 
 }
