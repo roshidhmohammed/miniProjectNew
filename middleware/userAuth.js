@@ -1,14 +1,23 @@
 const session = require("express-session");
+const User = require("../models/userModel")
 
 
 let userSession = false || {}
-let isLoggedIn
+let isLoggedin
 
 const isLogin = async (req,res,next) => {
     try {
         userSession = req.session
-        if(req.session.userId) {
+        if(userSession.userId) {
+            userData = await User.findById({_id:userSession.userId})
+            if(userData.is_verified===1){
+                
+            
         next();
+    } else {
+        userSession.userId = null;
+        res.redirect("/login");
+    }
         }
         else{
             res.redirect('/login');
@@ -22,11 +31,10 @@ const isLogin = async (req,res,next) => {
 const isLogout = async (req,res,next) => {
     try {
         userSession = req.session
-        if(req.session.userId){
-            req.session.userId=null
-            res.redirect('/login');
-        }else{
-            res.redirect('/login');
+        if(userSession.userId){
+            // userSession.userId=null
+            isLoggedin = true
+            res.redirect('/');
         }
         next()
        

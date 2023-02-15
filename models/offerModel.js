@@ -13,7 +13,10 @@ const offerSchema  = new mongoose.Schema ({
         type:String,
         required:true
     },
-    minimumBill:{
+    minimumAmount:{
+        type:Number
+    },
+    maximumAmount:{
         type:Number
     },
     isActive: {

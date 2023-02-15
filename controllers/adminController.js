@@ -179,9 +179,9 @@ const LoadDashboard = async (req, res) => {
           completeOrder.push(append);
         
         }
-        let completeOrderData=[]
+        // let completeOrderData=[]
   
-        completeOrderData.push(completeOrder.forEach((order) => {
+        completeOrder.forEach((order) => {
           order.products.item.forEach((it) => {
             uniqueProductObjs.forEach((obj) => {
               if (it.productId._id.toString() === obj.id.toString()) {
@@ -199,8 +199,8 @@ const LoadDashboard = async (req, res) => {
             //   console.log('end')
             });
           });
-        }))
-        console.log(completeOrderData)
+        })
+        // console.log(completeOrderData)
         
         const salesCount = [];
         const productName = productData.map((product) => product.name);
@@ -315,15 +315,22 @@ const blockUser = async (req,res) => {
   }
 
 
-  const updateCategory = async (req, res) => {
+  const updateCategory = async (req,res) => {
     try {
       adminSession = req.session
       if (adminSession.adminId) {
         const id = req.params.id
-        const categoryData = await Category.findByIdAndUpdate({ _id: id }, { name: req.body.category })
+        const categorys = req.body.category
+        const categoryDatas = await Category.findById({ _id: id })
+        const categoryAllData = await Category.findOne({name:{$regex:new RegExp("^" + categorys.toUpperCase(),"i")}})
+        if (categoryAllData) {
+          res.render('editcategory',{category:categoryDatas,message: "Category already exist" })
+        } else  {
         if (categoryData) {
+          const categoryData = await Category.findByIdAndUpdate({ _id: id }, { name: req.body.category })
           res.redirect('/admin/admin-category')
         }
+      }
       } else {
         res.redirect('/admin/login')
       }
@@ -480,6 +487,66 @@ const updateProducts = async (req,res) => {
     }
 }
 
+
+const editProductImage = async(req,res) =>{
+  try {
+    adminSession = req.session
+    if(adminSession.adminId){
+      const id= req.query.id
+      console.log("ided:"+id)
+      const productData = await Product.findById({_id:id})
+      console.log(productData);
+      res.render("editProductImage",{products:productData})
+
+    } else{
+      res.redirect('/admin/login')
+    }
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
+const updateProductImage = async (req,res) =>{
+  try {
+    adminSession= req.session
+    if(adminSession.adminId){
+    const id = req.params.id
+    const files = req.files
+    
+    const productData =  await Product.findById({_id:id})
+    const productImage = productData.image
+    console.log(productImage);
+    if(req.query.uploaded_file) {
+      const image1 = productData.image[0]
+      await Product.findByIdAndUpdate({_id:id},{$set:{image1}})
+    } else if(req.query.uploaded_file) {
+      const image2 = productData.image[1]
+      await Product.findByIdAndUpdate({_id:id},{$set:{image2}})
+    } else if(req.query.uploaded_file){
+      const image3 = productData.image[2]
+      await Product.findByIdAndUpdate({_id:id},{$set:{image3}})
+    } else if(req.query.uploaded_file){
+      const image4 = productData.image[3]
+      await Product.findByIdAndUpdate({_id:id},{$set:{image4}})
+    }
+    // for (i=0;i<=productImage.length;i++) {
+    //   const image= req.file.filename
+    //   const images = image[i]
+    //    const productImages = await Product.findByIdAndUpdate({_id:id},{$set:{images}})
+    //    await productImages.save()
+    
+    // }
+  
+  res.redirect('/admin/view-products')
+
+    } else {
+      res.redirect('/admin/login')
+    }
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+
     
 const productBlock = async (req,res) => {
     try {
@@ -591,7 +658,8 @@ const adminAddOffer = async (req,res) => {
             name:req.body.name,
             type:req.body.type,
             discount:req.body.discount,
-            minimumBill:req.body.minimumBill
+            minimumAmount:req.body.minimumAmount,
+            maximumAmount:req.body.maximumAmount
         })
         await offer.save()
         res.redirect("/admin/admin-offer")
@@ -646,7 +714,7 @@ const adminViewOrder = async (req,res) => {
 const adminCancelOrder = async (req,res) =>{
     try {
         const id =req.query.id;
-        await Orders.deleteOneAndUpdateOne({_id:id},{$set:{status:'Cancelled'}});
+        await Orders.findByIdAndUpdate({_id:id},{$set:{status:'Cancelled'}});
         res.redirect('/admin/adminOrder')
     } catch (error) {
         console.log(error.message)
@@ -742,14 +810,38 @@ const currentBanner = async (req, res) => {
     }
 }
 
+const bannerDelete = async(req,res) =>{
+  try {
+    const bannerData = await Banner.findByIdAndDelete({_id:req.query.id})
+      res.redirect('/admin/loadBanners')
+  } catch (error) {
+    console.log(error.message)
+  }
+}
+// const bannerUnBlock = async(req,res) =>{
+//   try {
+//     const bannerData = await Banner.findByIdAndUpdate({_id:req.query.id},{$set:{is_active:0}})
+//     res.redirect('/admin/loadBanners')
+//   } catch (error) {
+//     console.log(error.message)
+//   }
+// }
+
 const usersDownload = async function(req,res){
     try {
-        const day = new Date(3*86400000 );
+        const day = new Date(1*86400000 );
         const today = new Date()
         const dateTimeTofilter = new Date() - day;
-        const filter = {"createdAt":{$gte:dateTimeTofilter}}
-        console.log(filter)
+        // const filter = {"createdAt":{$gte:dateTimeTofilter}}
+        // console.log(filter)
         console.log(today)
+        let startDate =""
+        let endDate=""
+        startDate = req.query.startDate
+        endDate = req.query.endDate
+        const noOfDays = endDate-startDate
+        const totalNoOfDays = noOfDays*day
+        const filter = {"createdAt":{$gte:startDate,$lt:endDate}}
         
       const workBook = new excelJs.Workbook();
       const workSheet = workBook.addWorksheet("My users");
@@ -802,13 +894,13 @@ const usersDownload = async function(req,res){
   }
 
 
-  const imageCrops = async (req,res) =>{
-    try {
-        res.render('cropImage')
-    } catch (error) {
-        console.log(error.message)
-    }
-  }
+  // const imageCrops = async (req,res) =>{
+  //   try {
+  //       res.render('cropImage')
+  //   } catch (error) {
+  //       console.log(error.message)
+  //   }
+  // }
 
 //   const imageCrops = async (req,res) =>{
 //     // (async function () {
@@ -941,13 +1033,17 @@ module.exports = {
     getBanners,
     addBanner,
     currentBanner,
+    bannerDelete,
     usersDownload,
     editCategory,
     updateCategory,
-    imageCrops,
+    // imageCrops,
     loadCoupon,
     blockCoupon,
-    showCoupon
+    showCoupon,
+    editProductImage,
+    updateProductImage
+    
 }
 
 

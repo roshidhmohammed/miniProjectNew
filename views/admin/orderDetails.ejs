@@ -5,10 +5,10 @@
       <table class="table m-0" >
         <thead style="background-color: black;">
           <tr>
-            <th scope="col" style="font-weight: bolder;">Product</th>
-            <th scope="col" style="font-weight: bolder;">Quantity</th>
-            <th scope="col" style="font-weight: bolder;">Price</th>
-            <th scope="col" style="font-weight: bolder;">Total Price</th>
+            <th scope="col" style="font-weight: bolder; color: white;">Product</th>
+            <th scope="col" style="font-weight: bolder; color: white;">Quantity</th>
+            <th scope="col" style="font-weight: bolder; color: white;">Price</th>
+            <th scope="col" style="font-weight: bolder; color: white;">Total Price</th>
           </tr>
         </thead>
         <tbody style="background-color: aquamarine; font-weight: bold; text-decoration-color: black;">
@@ -30,6 +30,22 @@
 
       <h2 class="text-center text-danger" style="background-color: black;">Cart Total Price:
         <%= product.totalPrice %></h2>
+
+        <div class="card text-bg-dark mb-3 mt-3" style="max-width: 110rem; max-height: 110rem; background-color: black; color: white;">
+          <div class="card-header  " style="border-color: white; padding-left: 43rem;"><h2>Address</h2></div>
+          <hr>
+          <div class="card-body">
+            <p class="card-text"><span style="color:red;"> NAME :</span> <%= order.firstname%></p>
+            <p class="card-text"><span style="color:red;">LAST NAME :</span> <%= order.lastname%></p>
+            <p class="card-text"><span style="color:red;">ADDRESS 1 :</span> <%= order.address1%></p>
+            <p class="card-text"><span style="color:red;">ADDRESS 2 :</span> <%= order.address2%></p>
+            <p class="card-text"><span style="color:red;">CITY :</span> <%= order.city%></p>
+            <p class="card-text"><span style="color:red;">STATE :</span> <%= order.state%></p>
+            <p class="card-text"><span style="color:red;">ZIP :</span> <%= order.zip%></p>
+            <p class="card-text"><span style="color:red;">COUNTRY :</span> <%= order.country%></p>
+            <p class="card-text"><span style="color:red;">MOBILE NUMBER :</span> <%= order.mobno%></p>
+          </div>
+        </div>
       
     
 

@@ -93,7 +93,7 @@
         <form action="/checkout" method="post" class="billing-form">
         
             <div class="row px-xl-5">
-                <a href="/address" ><i class="icon-edit btn-danger">Add address</i></a>
+                <a href="/address" style="color:darkred; font-weight: bold; font-size: larger;" >Add address</a>
                 <div class="col-lg-8 table-responsive mb-5">
                 
                 <div class="col-lg-9">
@@ -166,7 +166,60 @@
                         </div>
                         <% } else { %>
 
-                            <h3>no address found</h3>
+                            <h5 style="color: red;">NO Address Available - Choose Below Address or Add Address</h5>
+
+                            <div class="col-md-6 form-group">
+                                <label style="font-weight: bold;">First Name</label>
+                                <input class="form-control border-secondary font-weight-medium" type="text" name="firstname" placeholder="">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label style="font-weight: bold;">Last Name</label>
+                                <input class="form-control border-secondary" type="text" name="lastname" placeholder="">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label style="font-weight: bold;">E-mail</label>
+                                <input class="form-control border-secondary" type="text" name="email" placeholder="">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label style="font-weight: bold;">Mobile No</label>
+                                <input class="form-control border-secondary" type="text" name="mobno" placeholder="">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label style="font-weight: bold;">Address Line 1</label>
+                                <input class="form-control border-secondary" type="text" name="address1" placeholder="">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label style="font-weight: bold;">Address Line 2</label>
+                                <input class="form-control border-secondary" type="text" name="address2" placeholder="">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label style="font-weight: bold;">country</label>
+                                <input class="form-control border-secondary" type="text" name="country" placeholder="">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label style="font-weight: bold;">City</label>
+                                <input class="form-control border-secondary" type="text" name="city" placeholder="">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label style="font-weight: bold;">State</label>
+                                <input class="form-control border-secondary" type="text" name="state" placeholder="">
+                            </div>
+                            <div class="col-md-6 form-group">
+                                <label style="font-weight: bold;">ZIP Code</label>
+                                <input class="form-control border-secondary" type="text" name="zip" placeholder="">
+                            </div>
+                            <!--  <div class="col-md-12 form-group">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="newaccount">
+                        <label class="custom-control-label" for="newaccount">Create an account</label>
+                    </div> -->
+                    </div>
+                    <div class="col-md-12 form-group">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="shipto">
+                            <!-- <label class="custom-control-label" for="shipto"  data-toggle="collapse" data-target="#shipping-address">Ship to different address</label> -->
+                        </div>
+                    </div>
 
                             <% } %>
                     </div>
@@ -211,6 +264,7 @@
                                                                 <br>
                                                                 <br>
                                                             <a href="/delete-address?id=<%=key._id%>" ><i class="icon-edit btn-danger">Delete</i></a> 
+                                                            <a href="/edit-address?id=<%= key._id %>"  ><i class="icon-edit btn-danger">edit</i></a>
                                                                                                 
                                                         </p>
                                                     </div>

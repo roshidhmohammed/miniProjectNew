@@ -45,24 +45,21 @@
                         <br>
 
 
-                        <div class="dropdown">
-                            <button class="btn border-secondary dropdown-toggle" type="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true"
-                                    aria-expanded="false">
-                                        Export Orders
-                                    </button>
-                            <div class="dropdown-menu " style="background-color: black; text-align: center;" aria-labelledby="dropdownMenuLink"> 
-                               <a href="/admin/exportUsers" value="<%= orderData %>" ><option class="dropdown-item"  style="color: aqua; font-weight: bolder;"  >Last 3 days</option></a>
-                                
-                                
-                                <!-- <a class="dropdown-item" href="#">Jackets</a> -->
-                                    
-                            
-                            
-                                <a href="/admin/exportUsers" value="<%= 5*orderData %>"><option class="dropdown-item"  style="color: aqua; font-weight: bolder;" >Last 6 days</option></a>
-
-                                </div>
-                        </div>
-
+                        <form action="/admin/exportUsers" >
+                            <h4>Export Orders</h4>
+                            <label>
+                              Enter Starting Date:
+                              <input type="date" name="startDate" />
+                            </label>
+                            <br>
+                            <label>
+                                Enter Ending Date:
+                                <input type="date" name="endDate" />
+                              </label>
+                          
+                            <p><button type="submit" value="<%= 5*orderData %>" >Submit</button></p>
+                          </form>
+                          
 
                         
                         
@@ -118,7 +115,7 @@
                                                                         <%= order[i-1].payment %>
                                                                     </td>
                                                                     <td>
-                                                                        <%= order[i-1].products.totalPrice %>
+                                                                        <%= order[i-1].amount %>
                                                                     </td>
                                                                     <td class="text-success">
                                                                         <%= order[i-1].status %>
@@ -214,7 +211,7 @@
                                                                 <th scope="col" style="font-weight: bolder;">SI NO</th>
                                                                 <th scope="col" style="font-weight: bolder;">Order Id</th>
                                                                 <th scope="col" style="font-weight: bolder;">User Name</th>
-                                                                <th scope="col" style="font-weight: bolder;">Time</th>
+                                                                <th scope="col" style="font-weight: bolder;">Date</th>
                                                                 <th scope="col" style="font-weight: bolder;">Mode</th>
                                                                 <th scope="col" style="font-weight: bolder;">Total Price</th>
                                                                 <th scope="col" style="font-weight: bolder;">Status</th>

@@ -17,6 +17,7 @@
           <th scope="col" style="font-weight:bolder;">Description</th>
           <th style="font-weight:bolder;">Image</th>
           <th style="font-weight:bolder;">Actions</th>
+          <!-- <th style="font-weight:bolder;"> Image Actions</th> -->
           <th scope="col" style="font-weight:bolder;">Status</th>
         </tr>
       </thead>
@@ -38,8 +39,10 @@
                 <a class="text-success"
                                                     href="/admin/editProduct?id=<%= products[i-1]._id %>"><i
                                                         style="color:darkblue; font-size: medium; font-weight: bolder; "
-                                                        class="m-r-5 mdi mdi-border-color">Edit</i></a><br>
+                                                        class="m-r-5 mdi mdi-border-color">Edit</i>
+                                                      </a><br>
               </td>
+              
               <td>
                 <% if( products[i-1].is_available===0) { %>
                   <button type="button"><a href="/admin/product-block?id=<%= products[i-1]._id%>"

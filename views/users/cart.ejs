@@ -43,7 +43,9 @@
                         <td class="align-middle">price: <%=key.productId.price %></td>
                         <td class="align-middle">
                             <div class="input-group mb-3">
+                                 
                                 <input type="hidden" id="productId" value="<%= key.productId._id %> %>">
+                                
                              <input type="number" name="quantity" class="quantity form-control input-number qty"  value="<%= key.qty %>" min="1" max="10">
                           </div>
                         </td>
@@ -120,7 +122,6 @@
 
 <script> 
 
-
 const qty = document.querySelectorAll('.qty')		   
     const qtyHandler = async(e)=>{
        try {
@@ -143,6 +144,7 @@ const qty = document.querySelectorAll('.qty')
     qty.forEach(q =>{
      q.addEventListener('change',qtyHandler)
     })
+
 </script>
 
 <%- include("../layouts/userfooter.ejs") %>

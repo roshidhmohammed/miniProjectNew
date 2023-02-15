@@ -50,13 +50,13 @@
         
             
         <div class="row align-items-center py-3 px-xl-5">
-            <div class="col-lg-3 d-none d-lg-block">
+            <div class="col-lg-9 d-none d-lg-block " style="padding-left: 30rem;">
                 <a href="" class="text-decoration-none">
-                    <h1 class="m-0 display-5 font-weight-semi-bold; text-dark"><span
-                            class="text-dark font-weight-bold border px-3 mr-1 border-dark">E</span>Shopper</h1>
+                    <h1 class="m-0 display-9  font-weight-semi-bold; text-dark "><span
+                            class="text-dark font-weight-bold border px-3 mr-1 border border-dark ">E</span>Shopper</h1>
                 </a>
             </div>
-            <div class="col-lg-6 col-6 text-left">
+            <!-- <div class="col-lg-6 col-6 text-left">
                 <form action="">
                     <div class="input-group">
                         <input type="text" class="form-control border-secondary" placeholder="Search for products" name="search">
@@ -68,13 +68,13 @@
                         </div>
                     </div>
                 </form>
-            </div>
+            </div> -->
             <div class="col-lg-3 col-6 text-right ">
                 <a href="/wishlist" class="btn border-secondary mr-4">
                     <i class="fas fa-heart text-dark"></i>
                     <span class="badge " style="color:black"><%=user.wishlist.item.length%></span>
                 </a>
-                <a href="/cart" class="btn border-secondary">
+                <a href="/cart" class="btn border-secondary mr-2">
                     <i class="fas fa-shopping-cart text-dark"></i>
                     <span class="badge" style="color:black"><%=user.cart.item.length%></span>
                 </a>
@@ -97,15 +97,15 @@
                         <span class="navbar-toggler-icon"></span>
                     </button>
                     <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                        <div class="navbar-nav mr-auto py-0">&nbsp;
-                            <a href="view-product" class="nav-item nav-link active; text-light">Home</a> &nbsp;  &nbsp;
-                            <a href="shop" class="nav-item nav-link active; text-white">Shop</a>  &nbsp;  &nbsp;
+                        <div class="navbar-nav mr-auto ml-4 py-0">&nbsp;
+                            <a href="view-product" class="nav-item nav-link active; text-light p-3 m-1"><i class="fas fa-home text-light m-1"></i>Home</a> &nbsp;  &nbsp;
+                            <a href="shop" class="nav-item nav-link active; text-white p-3 m-1"><i class="fas fa-shopping-bag text-light m-1"></i>Shop</a>  &nbsp;  &nbsp;
                             
                             <!-- <a href="/login" class="nav-item nav-link active; text-white">Log out</a> &nbsp;  &nbsp; -->
                         </div>
-                        <div class="navbar-nav ml-auto py-0">
-                            <a href="/login" class="nav-item nav-link active; text-white">Log out</a> &nbsp;  &nbsp;
-                            <a href="/dashboard" class="nav-item nav-link active; text-white">Profile</a>  &nbsp;  &nbsp;
+                        <div class="navbar-nav ml-auto mr-4 py-0">
+                            <a href="/logout" class="nav-item nav-link active; text-white" p-3 m-1><i class="fa fa-sign-out text-light m-1"></i>Log out</a> &nbsp;  &nbsp;
+                            <a href="/dashboard" class="nav-item nav-link active; text-white p-3 m-1"><i class="fas fa-user text-light m-1"></i>Profile</a>  &nbsp;  &nbsp;
                             <!-- <a href="/login" class="nav-item nav-link active; text-white">Login</a> &nbsp;  &nbsp; -->
                             <!-- <a href="/register" class="nav-item nav-link active; text-white">Register</a>  &nbsp; &nbsp; -->
                         </div>

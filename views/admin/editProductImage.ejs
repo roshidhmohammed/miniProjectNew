@@ -1,0 +1,62 @@
+<%- include("../layouts/adminheader.ejs") %>
+
+<form action="/admin/editProductImage/<%=products._id%>" method="post" encType="multipart/form-data">
+ 
+<div class="mb-4 form-floating">
+  <label for="floatingInput" style="color:black; font-size: medium; font-weight: bolder;">Image</label>
+  <img src="/banners/<%=products.image[0]%>" height="75vh" width="75vh">
+  <input type="file" style="background-color:black; color: white;" name="uploaded_file" class="form-control"  id="formFileMultiple"  >
+</div>
+<div class="d-flex flex-row align-items-center mb-4">
+  <button type="submit" class="btn btn-secondary" style="color: black; font-weight: bolder; font-size: medium;">Submit
+      
+  </button>
+  </div>
+
+</form>
+
+
+<form action="/admin/editProductImage/<%=products._id%>" method="post" encType="multipart/form-data">
+ 
+  <div class="mb-4 form-floating">
+    <label for="floatingInput" style="color:black; font-size: medium; font-weight: bolder;">Image</label>
+    <img src="/banners/<%=products.image[1]%>" height="75vh" width="75vh">
+    <input type="file" style="background-color:black; color: white;" name="uploaded_file" class="form-control"  id="formFileMultiple"  >
+  </div>
+  <div class="d-flex flex-row align-items-center mb-4">
+    <button type="submit" class="btn btn-secondary" style="color: black; font-weight: bolder; font-size: medium;">Submit
+        
+    </button>
+    </div>
+  
+  </form>
+
+  <form action="/admin/editProductImage/<%=products._id%>" method="post" encType="multipart/form-data">
+ 
+    <div class="mb-4 form-floating">
+      <label for="floatingInput" style="color:black; font-size: medium; font-weight: bolder;">Image</label>
+      <img src="/banners/<%=products.image[2]%>" height="75vh" width="75vh">
+      <input type="file" style="background-color:black; color: white;" name="uploaded_file" class="form-control"  id="formFileMultiple"  >
+    </div>
+    <div class="d-flex flex-row align-items-center mb-4">
+      <button type="submit" class="btn btn-secondary" style="color: black; font-weight: bolder; font-size: medium;">Submit
+          
+      </button>
+      </div>
+    
+    </form>
+
+    <form action="/admin/editProductImage/<%=products._id%>" method="post" encType="multipart/form-data">
+ 
+      <div class="mb-4 form-floating">
+        <label for="floatingInput" style="color:black; font-size: medium; font-weight: bolder;">Image</label>
+        <img src="/banners/<%=products.image[3]%>" height="75vh" width="75vh">
+        <input type="file" style="background-color:black; color: white;" name="uploaded_file" class="form-control"  id="formFileMultiple"  >
+      </div>
+      <div class="d-flex flex-row align-items-center mb-4">
+        <button type="submit" class="btn btn-secondary" style="color: black; font-weight: bolder; font-size: medium;">Submit
+            
+        </button>
+        </div>
+      
+      </form>

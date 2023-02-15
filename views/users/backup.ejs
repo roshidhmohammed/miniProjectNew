@@ -1,0 +1,28 @@
+<!-- cart -->
+
+
+<div class="input-group mb-3">
+                                <input type="hidden" id="productId" value="<%= key.productId._id %> %>">
+                             <input type="number" name="quantity" class="quantity form-control input-number qty"  value="<%= key.qty %>" min="1" max="10">
+                          </div>
+
+
+
+
+                          <!-- cart total -->
+                          <% } %>
+                          <div class="card-footer border-secondary bg-transparent">
+                              <div class="d-flex justify-content-between mt-2">
+                                  <% if(offer.usedBy<1) {%>
+                                  <h6 class="font-weight-bold">Total</h6>
+                                  <h6 class="font-weight-bold">
+                                      <%= couponTotal %>
+                                  </h6>
+                                  <% } else {%>
+                                      <h6 class="font-weight-bold">Total</h6>
+                                  <h6 class="font-weight-bold">
+                                      <%= couponTotal %>
+                                  </h6>
+                                 <% } %>
+                              </div>
+                          </div>

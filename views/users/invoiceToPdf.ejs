@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fabcart</title>
+    <title>E-Shopper</title>
     <style>
         body{
             background-color: #F6F6F6; 
@@ -91,20 +91,48 @@
             float: right;
         }
     </style>
+
+    
+    <!-- invoice -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+<script>
+    function generatePDF() {
+    const element = document.getElementById('container_content');
+    var opt = {
+          margin:       1,
+          filename:     'html2pdf_example.pdf',
+        //   image:        { type: 'jpeg', quality: 0.98 },
+          html2canvas:  { scale: 2 },
+          jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+        };
+        // Choose the element that our invoice is rendered in.
+        html2pdf().set(opt).from(element).save();
+    }
+</script>
+    
 </head>
 <body>
 
-    <div class="container">
+
+    <!-- <div class="text-center" style="padding:20px;">
+        <input type="button" id="rep" value="Print" class="btn btn-info btn_print">
+    </div> -->
+    <div class="text-center" style="padding:20px; margin-bottom: 1rem;">
+    <button onclick="generatePDF()" style="color:red; background-color:black;"><h3> Download Invoice As PDF</h3></button>
+</div>
+
+    <div class="container" id="container_content">
         <div class="brand-section">
             <div class="row">
-                <div class="col-8">
-                    <h1 class="text-white">E-SHOPPER</h1>
+                <div class="col-6">
+                    <h1 class="text-white" style="font-weight: bolder; font-size:xx-large">E-SHOPPER</h1>
                 </div>
-                <div class="col-4">
-                    <div class="company-details">
-                        <p class="text-white">trivandrum</p>
-                        <p class="text-white">kerala,india</p>
-                        <p class="text-white">+91 1234567890</p>
+                <div class="col-6 " >
+                    <div class="company-details" style="text-align-last: right;">
+                        <h4 class="text-white" >Trivandrum</h4>
+                        <h4 class="text-white">Kerala,India</h4>
+                        <h4 class="text-white">+91 1234567890</h4>
                     </div>
                 </div>
             </div>
@@ -179,7 +207,12 @@
                 <a href="eshopper.tech" class="float-right">eshopper.tech</a>
             </p>
         </div>      
-    </div>      
+        
+    </div> 
+
+
+    
+    
 
 </body>
 </html>

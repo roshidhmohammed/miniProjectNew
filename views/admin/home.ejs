@@ -110,13 +110,13 @@
                         const catcounts = catcount.value.split(",");
       
                         new Chart(cty, {
-                          type: "bar",
+                          type: "line",
                           data: {
                             labels: catnames,
                             datasets: [
                               {
                                 label: "sales",
-                                data: pcounts,
+                                data: catcounts,
                                 borderWidth: 1,
                               },
                             ],

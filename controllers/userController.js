@@ -8,7 +8,7 @@ const Banner = require("../models/bannerModel");
 const bcrypt = require('bcrypt');
 const fast2sms =require("fast-two-sms");
 const RazorPay = require('razorpay');
-// const pdf = require('html-pdf');
+const easyinvoice = require('easyinvoice');
 const fs = require('fs');
 const path = require('path');
 const ejs = require('ejs');
@@ -22,21 +22,25 @@ const app = express()
 app.use(express())
 app.use(cors())
 
-let isLoggedin
+let isLoggedin;
 isLoggedin = false
-let userSession = null || {}
-const {ObjectID} = require("bson")
+// let userSession = false || {}
+const {ObjectID} = require("bson");
+const { findById } = require('../models/categoryModel');
 let newUser
 let newOtp
 let offer = {
     name:'None',
     type:'None',
     discount:0,
-    minimumBill:'None',
+    minimumAmount:'None',
+    maximumAmount:'None',
     usedBy:false
 }
 let couponTotal = 0
 let currentOrder
+
+const ITEMS_PER_PAGE = 4
 
 
 const securePassword = async (password) => {
@@ -53,7 +57,7 @@ const securePassword = async (password) => {
 const loadRegister = async(req,res) => {
     try {
 
-        res.render('login');
+        res.render('registration');
 
     } catch(error) {
         console.log(error.message);
@@ -287,14 +291,20 @@ const verifyLogin = async (req,res) => {
 const loadHome  = async(req,res) => {
     try {
         userSession = req.session
-        const userData = await User.findById({_id:userSession.userId})
         const banner = await Banner.find({ is_active: 1 });
+        const productData = await Product.find()
+        if(userSession.userId){
+        const userData = await User.findById({_id:userSession.userId})
+        
         userSession.offer = offer
         userSession.couponTotal = couponTotal
-        const productData = await Product.find()
+       
     
 
-        res.render('view-product',{isLoggedin,productshop:productData, id:userSession.userId,banners: banner,user:userData});
+        res.render('view-product',{isLoggedin,productshop:productData,banners: banner,userData,user:userData});
+        } else {
+            res.render('view-product',{isLoggedin,productshop:productData,banners:banner})
+        }
     } catch (error) {
         console.log(error.message);
     }
@@ -316,10 +326,10 @@ const userLogout = async (req,res) => {
     try {
         userSession = req.session
         userSession.userId= null
-        isLoggedin = false
+        isLoggedin = false;
         console.log("logged out");
 
-        res.redirect('/login');
+        res.redirect('/');
         
     } catch (error) {
         console.log(error.message);
@@ -330,8 +340,8 @@ const userLogout = async (req,res) => {
 const usershop = async (req,res) => {
     try {
         userSession = req.session
-        const userData = await User.findById({_id:userSession.userId})
-        const id = req.session.userId;
+        
+        // const id = req.session.userId;
         const category = await Category.find({is_available:0})
         // const productshop = await Product.find({is_available:1})
         let search = ''
@@ -365,7 +375,8 @@ const usershop = async (req,res) => {
     const ID = req.query.id
     // console.log(categoryData)
     const data = await Category.findOne({ _id: ID })
-        
+    if(userSession.userId){
+        const userData = await User.findById({_id:userSession.userId})
         // const productData = await Product.find()
         if (data) {
             const productData = await Product.find({ category: data.name })
@@ -377,7 +388,8 @@ const usershop = async (req,res) => {
               totalPages: Math.ceil(count / limit),
               currentPage: page,
               previous: new Number(page) - 1,
-              next: new Number(page) + 1
+              next: new Number(page) + 1,
+              user:userData
             })
           } else {
             // const productData = await Product.find()
@@ -396,6 +408,39 @@ const usershop = async (req,res) => {
               user:userData
             })
           }
+        } else {
+            if (data) {
+                const productData = await Product.find({ category: data.name })
+                console.log(productData)
+                res.render('shop', {
+                  productshop: productData,
+                  isLoggedin,
+                  cat: categoryData,
+                  totalPages: Math.ceil(count / limit),
+                  currentPage: page,
+                  previous: new Number(page) - 1,
+                  next: new Number(page) + 1,
+                //   user:userData
+                })
+              } else {
+                // const productData = await Product.find()
+                res.render('shop', {
+                  isLoggedin,
+                  cat: categoryData,
+                  productshop: productData,
+                  id: userSession.userId,
+                  totalPages: Math.ceil(count / limit),
+                  currentPage: page,
+                  category,
+                //   categoryData,
+                //   id:userSession.userId,
+                  previous: new Number(page) - 1,
+                  next: new Number(page) + 1,
+                //   user:userData
+                })
+              }
+
+        }
 
        
         
@@ -424,13 +469,13 @@ const getCategoryProduct = async (req, res) => {
 
 const productDetail  =async (req,res) =>{
     try {
-        userSession= req.session
-        const userData = await User.findById({_id:userSession.userId})
+        // userSession= req.session
+        // const userData = await User.findById({_id:userSession.userId})
         const id = req.query.id
         const products = await Product.find()
         const productData = await Product.findById({_id:id}).exec(async function(err,productData){;
         if (productData) {
-            res.render('product-detail',{isLoggedin,product:productData,products:products,userSession:userSession.userId,user:userData})
+            res.render('product-detail',{product:productData,products:products})
         } else if(err){
             res.redirect('*')
         }   
@@ -442,11 +487,16 @@ const productDetail  =async (req,res) =>{
 
 const userProfile = async (req,res) =>{
     try {
+        userSession= req.session
+        if(userSession.userId) {
         const orderData = await Orders.find({userId:userSession.userId})
         const userData = await User.findById({_id:userSession.userId})
         const addressData = await Address.findById({_id:userSession.userId})
         console.log(addressData)
-        res.render('dashboard',{isLoggedin,user:userData,userOrders:orderData,userAddress:addressData})     
+        res.render('dashboard',{isLoggedin,user:userData,userOrders:orderData,userAddress:addressData})
+        } else{
+            res.redirect('/login')
+        }     
     } catch (error) {
         console.log(error.message)
         
@@ -455,10 +505,15 @@ const userProfile = async (req,res) =>{
 
 const userOrders = async (req,res) =>{
     try {
-        const orderData = await Orders.find({userId:userSession.userId})
+        userSession= req.session
+        if(userSession.userId) {
+        const orderData = await Orders.find({userId:userSession.userId}).sort({createdAt:-1})
         const userData = await User.findById({_id:userSession.userId})
         res.render("orders",{order:orderData,user:userData})
-    } catch (error) {
+    } else{
+        res.redirect('/login')
+    }     
+    }catch (error) {
         console.log(error.message)
     }
 }
@@ -466,14 +521,16 @@ const userOrders = async (req,res) =>{
 const cancelOrder = async (req,res) => {
     try {
         userSession = req.session
+        const userDatas = await User.findById({_id:userSession.userId})
         if(userSession.userId){
             const id = req.query.id
             const orderData = await Orders.findById({_id:id})
         if(orderData.payment === "Razorpay"){
         
         const orderDelete  = await Orders.findByIdAndUpdate({_id:id},{$set:{status:"Cancelled"}})
+        const wallet= userDatas.wallet+orderData.products.totalPrice
         
-        const userData = await User.findByIdAndUpdate({_id:userSession.userId},{$set:{wallet:orderData.amount}})
+        const userData = await User.findByIdAndUpdate({_id:userSession.userId},{$set:{wallet:wallet}})
         // if(orderData.payment === "RAZORPAY"){
         //     res.redirect('/wallet')
         // }else  {
@@ -548,12 +605,19 @@ const viewOrderDetail = async (req,res) =>{
 }
 const addAddress = async (req,res) =>{
     try {
+        userSession = req.session
+        if(userSession.userId) {
         const userData = await User.findById({_id:userSession.userId})
         res.render('address',{user:userData})
-    } catch (error) {
+    } else {
+        res.redirect('/login')
+    }
+    }catch (error) {
         console.log(error.messsage)
     }
 }
+
+
 const updateAddress = async (req,res) =>{
     try {
         userSession = req.session
@@ -580,6 +644,68 @@ const updateAddress = async (req,res) =>{
     }
 }
 
+
+const editAddress = async (req,res) =>{
+    try {
+        userSession = req.session
+        if(userSession.userId) {
+            const userData = await User.findById({_id:userSession.userId})
+            let addressData
+            if(userData){
+                const id = req.query.id
+                console.log(id)
+
+                addressData =  await Address.findById({_id:id})
+            }
+            console.log('address:'+userData)
+            console.log(addressData);
+            res.render('edit-address',{user:userData,address:addressData})
+            
+
+        } else {
+            res.redirect('/login')
+        }
+        
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
+const updateEditAddress = async(req,res) =>{
+    try {
+        userSession = req.session
+        if(userSession.userId) {
+            const userData = await User.findById({_id:userSession.userId})
+            // if(userData){
+               const id  = req.params.id
+               console.log(id)
+           const addressData = await Address.findByIdAndUpdate({_id:id},
+            {$set:
+            { 
+             firstname:req.body.firstname,
+             lastname:req.body.lastname,
+             country:req.body.country,
+             address1:req.body.address1,
+             address2:req.body.address2,
+             city:req.body.city,
+             state:req.body.state,
+             zip:req.body.zip,
+             mobno:req.body.mobno,
+             email:req.body.email    
+            }
+            })
+            res.redirect('/address')
+        
+
+        } else {
+            res.redirect('/login')
+        }
+
+    } catch (error) {
+        console.log(error.message)
+    }
+}
+
 const deleteAddress = async (req, res) => {
     try {
       userSession = req.session;
@@ -594,13 +720,15 @@ const deleteAddress = async (req, res) => {
 
 const editUser = async (req,res) =>{
     try {
+        usersession = req.session
+        if(userSession.userId) {
         const id = req.query.id
         
         // userSession = req.session;
         const userData  = await User.find({_id:id})
         const userDatas  = await User.findById({_id:userSession.userId})
+        const addressData  =await Address.findById({_id:id})
         // await User.findByIdAndUpdate(
-            
         //     { _id: userSession.userId },
         //     {
         //       $set: {
@@ -610,9 +738,11 @@ const editUser = async (req,res) =>{
         //       },
         //     }
         //   );
-          
         res.render('edit-user',{users:userData,user:userDatas})
-    } catch (error) {
+    } else {
+        res.redirect('/login')
+    }
+    }catch (error) {
         console.log(error.message)
         
     }
@@ -645,7 +775,8 @@ const loadCart = async (req,res) =>{
             
             res.render('cart',{isLoggedin,id:userSession.userId,cartProducts:completeUser.cart,offer:userSession.offer,couponTotal:userSession.couponTotal,user:userData})
         } else {
-            res.render('cart',{isLoggedin,id:userSession.userId,offer:userSession.offer,couponTotal:userSession.couponTotal})
+            // res.render('cart',{isLoggedin,id:userSession.userId,offer:userSession.offer,couponTotal:userSession.couponTotal})
+            res.redirect('/login')
         }
          
     } catch (error) {
@@ -655,15 +786,20 @@ const loadCart = async (req,res) =>{
 
 const addToCart = async(req,res,next) =>{
     try {
+        userSession = req.session
+        if(userSession.userId) {
         console.log("cart working")
 
         const productId = req.query.id
-        userSession = req.session
+        // userSession = req.session
         const userData = await User.findById({_id:userSession.userId})
         const productData = await Product.findById({_id:productId})
         userData.addToCart(productData)
         res.redirect('/cart')
-} catch (error) {
+} else {
+    res.redirect('/login')
+}
+}catch (error) {
     console.log("cart not working")
         console.log(error.message)
 }
@@ -748,13 +884,15 @@ const loadCheckout = async (req,res) => {
             const userData = await User.findById({_id: userSession.userId})
             const completeUser = await userData.populate('cart.item.productId')
             const addressData = await Address.find({userId:userSession.userId})
-            console.log("user:" +addressData)
+            
             const selectAddress = await Address.findOne({_id:id})
-            console.log("address:" + selectAddress)
+           
             const offerData = await Offer.find()
             if(userSession.couponTotal == 0) {
                 userSession.couponTotal = userData.cart.totalPrice
+                console.log("2:" +userSession.couponTotal)
             }
+            console.log(userSession.couponTotal)
             res.render('checkout',{isLoggedin,id: userSession.userId,cartProducts:completeUser.cart,userAddress:addressData,updateAddress:selectAddress,offers:offerData,offer:userSession.offer,couponTotal:userSession.couponTotal,user:userData})
         } else {
             res.render('/',{isLoggedin,id:userSession.userId,offer:userSession.offer,couponTotal:userSession.couponTotal})
@@ -870,7 +1008,8 @@ const loadWishlist = async (req,res) =>{
             console.log(completeUser.wishlist.item)
             res.render('wishlist',{isLoggedin,id:userSession.userId,wishlistProducts:completeUser.wishlist,user:userData})
         } else {
-            res.render('wishlist',{isLoggedin,id:userSession.userId})
+            // res.render('wishlist',{isLoggedin,id:userSession.userId})
+            res.redirect('/login')
         }
     } catch (error) {
         console.log(error.message)
@@ -897,7 +1036,6 @@ const addToWishlist = async (req,res) => {
         console.log(error.message)    
     }
 }
-
 const addCartDeleteWishlist = async (req,res) =>{
     try {
         const productId = req.query.id
@@ -967,6 +1105,7 @@ const addCoupon = async (req,res) =>{
             if(offerData){
                 // console.log(offerData)
                 // console.log(offerData.usedBy)
+                
 
                 if(offerData.usedBy.includes(userSession.userId)) {
                     // console.log("coupon not used")
@@ -986,9 +1125,11 @@ const addCoupon = async (req,res) =>{
                     userSession.offer.name = offerData.name
                     userSession.offer.type  = offerData.type
                     userSession.offer.discount  = offerData.discount
-                    userSession.offer.minimumBill = offerData.minimumBill
+                    userSession.offer.minimumAmount = offerData.minimumAmount
+                    userSession.offer.maximumAmount = offerData.maximumAmount
 
                     // if(userData.cart.totalPrice>=offerData.minimumBill) {
+                        if(userData.cart.totalPrice>offerData.minimumAmount && userData.cart.totalPrice<offerData.maximumAmount) {
                     let updatedTotal = userData.cart.totalPrice - (userData.cart.totalPrice*userSession.offer.discount)/100
                     // console.log("minimumbill checking")
 
@@ -998,12 +1139,9 @@ const addCoupon = async (req,res) =>{
                     // }
                     console.log("coupon" + couponTotal)
                     res.redirect('/checkout')
-
-
-
-
-
-                    
+                        } else {
+                            res.redirect('/checkout')
+                        }   
                 }
 
             } else {
@@ -1018,68 +1156,69 @@ const addCoupon = async (req,res) =>{
     }
 }
 
-// const downloadInvoice = async (req,res) => {
-//     try {
-//         userSession = req.session
-//         if(userSession.userId) {
-//             const id = req.query.id
-//             const orderData = await Orders.findById({_id:id})
-//         const userData = await User.findById({_id:userSession.userId})
-//         await orderData.populate('products.item.productId')
-//             userSession.currentOrder = id
-//             const data = {
-//                 order: orderData
-//             }
-//             const filePathName = path.resolve(__dirname,'../views/users/invoiceToPdf.ejs')
-//             const htmlString = fs.readFileSync(filePathName).toString();
+const downloadInvoice = async (req,res) => {
+    try {
+        userSession = req.session
+        if(userSession.userId) {
+            const id = req.query.id
+            const orderData = await Orders.findById({_id:id})
+        const userData = await User.findById({_id:userSession.userId})
+        await orderData.populate('products.item.productId')
+            userSession.currentOrder = id
+            const data = {
+                order: orderData
+            }
+            // const filePathName = path.resolve(__dirname,'../views/users/invoiceToPdf.ejs')
+            // const htmlString = fs.readFileSync(filePathName).toString();
 
-//             let options = {
-//                 format: 'A3',
-//                 // orientation:"portrait",
-//                 // border:"10mm"
+            // let options = {
+            //     format: 'A3',
+            //     // orientation:"portrait",
+            //     // border:"10mm"
 
-//             }
-
-
-//             const ejsData = ejs.render(htmlString,data,userData)
+            // }
 
 
-//         // const filename = Math.random() + '_doc' + '.pdf';
-//         // let array = [];
+            // const ejsData = ejs.render(htmlString,data,userData)
+
+
+        // const filename = Math.random() + '_doc' + '.pdf';
+        // let array = [];
         
         
-//          pdf.create(ejsData,options).toFile('invoice.pdf',(err,response)=>{
-//          if(err) {
-//             console.log(err)
-//          } })
+        //  easyinvoice.createInvoice(ejsData,options).toFile('invoice.pdf',(err,response)=>{
+        //  if(err) {
+        //     console.log(err)
+        //  } })
 
-//         const filePath = path.resolve(__dirname,'../invoice.pdf');
-//         fs.readFile(filePath,(err,file)=>{
-//             if(err){
-//                 console.log(err);
-//                 return res.status(500).send('could not download file');
-//             }
-//             res.setHeader('content-type','application/pdf');
-//             res.setHeader('content-disposition','attachment;filename="users.pdf"');
+        // const filePath = path.resolve(__dirname,'../invoice.pdf');
+        // fs.readFile(filePath,(err,file)=>{
+        //     if(err){
+        //         console.log(err);
+        //         return res.status(500).send('could not download file');
+        //     }
+        //     res.setHeader('content-type','application/pdf');
+        //     res.setHeader('content-disposition','attachment;filename="users.pdf"');
 
-//             res.send(file);
-
-
-//         })
-//         //  res.render('orderProductDetail',{order:orderData,user:userData,couponTotal:userSession.couponTotal,offer:userSession.offer})
+        //     res.send(file);
 
 
-//         // orderData.forEach(orders=> {
-//         //     const order= {
+        // })
+        //  res.render('orderProductDetail',{order:orderData,user:userData,couponTotal:userSession.couponTotal,offer:userSession.offer})
 
-//         //     }
 
-//         // })
-//     }
-//     } catch (error) {
-//         console.log(error.message)
-//     }
-// }
+        // orderData.forEach(orders=> {
+        //     const order= {
+
+        //     }
+
+        // })
+        res.render('invoiceToPdf',{order:orderData})
+    }
+    } catch (error) {
+        console.log(error.message)
+    }
+}
 
 const returnProduct = async (req, res) => {
     try {
@@ -1100,6 +1239,10 @@ const returnProduct = async (req, res) => {
               ) {
                 productData.stock += productOrderData.products.item[i].qty
                 productOrderData.productReturned[i] = 1
+                console.log(productOrderData.products.item[i].price)
+                const wallet= userData.wallet+productOrderData.products.item[i].price
+                
+                await User.findByIdAndUpdate({_id:userSession.userId},{$set:{wallet:wallet}})
                 await productData.save().then(() => {
                   console.log('productData saved')
                 })
@@ -1165,7 +1308,9 @@ module.exports = {
     addCoupon,
     returnProduct,
     getCategoryProduct,
-    // downloadInvoice,
-    wallet
+    downloadInvoice,
+    wallet,
+    editAddress,
+    updateEditAddress
 
 }
